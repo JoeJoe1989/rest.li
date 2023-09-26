@@ -73,6 +73,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.ByteBuffer;
+import java.nio.Buffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -849,7 +850,9 @@ public class UriComponent {
 
             // Check if the byte buffer needs to be increased in size
             if (bb.position() == bb.capacity()) {
-                bb.flip();
+                // Fix java.lang.NoSuchMethodError: java.nio.ByteBuffer.flip()Ljava/nio/ByteBuffer based on the suggestions from
+                // https://stackoverflow.com/questions/61267495/exception-in-thread-main-java-lang-nosuchmethoderror-java-nio-bytebuffer-flip
+                ((Buffer)bb).flip();
                 // Create a new byte buffer with the maximum number of possible
                 // octets, hence resize should only occur once
                 ByteBuffer bb_new = ByteBuffer.allocate(s.length() / 3);
@@ -857,8 +860,9 @@ public class UriComponent {
                 bb = bb_new;
             }
         }
-
-        bb.flip();
+        // Fix java.lang.NoSuchMethodError: java.nio.ByteBuffer.flip()Ljava/nio/ByteBuffer based on the suggestions from
+        // https://stackoverflow.com/questions/61267495/exception-in-thread-main-java-lang-nosuchmethoderror-java-nio-bytebuffer-flip
+        ((Buffer)bb).flip();
         return bb;
     }
 
